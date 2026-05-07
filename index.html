@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>丁一 | 资深私人教练</title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+
+    /* ---- smooth scroll ---- */
+    html { scroll-behavior: smooth; }
+
+    /* ---- brand orange ---- */
+    :root {
+      --orange: #f97316;
+      --orange-dark: #ea580c;
+      --orange-glow: rgba(249, 115, 22, 0.35);
+    }
+
+    /* ---- fade-in on scroll ---- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ---- stagger children ---- */
+    .stagger > * {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .stagger.show > *:nth-child(1) { transition-delay: 0.0s; }
+    .stagger.show > *:nth-child(2) { transition-delay: 0.1s; }
+    .stagger.show > *:nth-child(3) { transition-delay: 0.2s; }
+    .stagger.show > *:nth-child(4) { transition-delay: 0.3s; }
+    .stagger.show > * { opacity: 1; transform: translateY(0); }
+
+    /* ---- counter ---- */
+    .counter-value { font-variant-numeric: tabular-nums; }
+
+    /* ---- hero divider clip ---- */
+    .hero-divider {
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 80px;
+      background: #0a0a0a;
+      clip-path: polygon(0 60%, 100% 0, 100% 100%, 0 100%);
+    }
+
+    /* ---- before/after image placeholder ---- */
+    .ba-split {
+      position: relative;
+      overflow: hidden;
+    }
+    .ba-split .ba-before,
+    .ba-split .ba-after {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+    .ba-split .ba-before {
+      clip-path: polygon(0 0, 45% 0, 45% 100%, 0 100%);
+      z-index: 1;
+    }
+
+    /* ---- divider line ---- */
+    .divider-line {
+      width: 60px;
+      height: 4px;
+      background: var(--orange);
+      border-radius: 2px;
+    }
+
+    /* ---- btn hover scale ---- */
+    .btn-scale {
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .btn-scale:hover {
+      transform: scale(1.04);
+      box-shadow: 0 12px 32px -8px var(--orange-glow);
+    }
+
+    /* ---- FAQ toggle ---- */
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.4s ease;
+    }
+    .faq-open .faq-answer {
+      max-height: 300px;
+      padding-top: 12px;
+    }
+    .faq-open .faq-icon {
+      transform: rotate(45deg);
+    }
+
+    /* ---- scrollbar ---- */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0a0a0a; }
+    ::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 3px; }
+
+    /* ---- mobile nav overlay ---- */
+    @media (max-width: 768px) {
+      .nav-menu {
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 10, 10, 0.97);
+        backdrop-filter: blur(16px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 32px;
+        transform: translateY(-100%);
+        transition: transform 0.4s ease;
+        z-index: 40;
+      }
+      .nav-menu.open { transform: translateY(0); }
+      .nav-menu a { font-size: 20px; }
+    }
+  </style>
+</head>
+<body class="bg-[#0a0a0a] text-white">
+
+  <!-- ===== NAV ===== -->
+  <nav class="fixed top-0 left-0 w-full z-50 px-6 lg:px-12 h-16 flex items-center justify-between bg-[#0a0a0a]/80 backdrop-blur-md border-b border-white/5">
+    <a href="#" class="text-xl font-black tracking-widest">
+      <span class="text-[var(--orange)]">丁</span>一
+    </a>
+
+    <!-- desktop links -->
+    <ul class="hidden md:flex items-center gap-8 text-sm font-medium tracking-wide text-gray-300">
+      <li><a href="#services" class="hover:text-[var(--orange)] transition-colors">服务</a></li>
+      <li><a href="#testimonials" class="hover:text-[var(--orange)] transition-colors">蜕变</a></li>
+      <li><a href="#faq" class="hover:text-[var(--orange)] transition-colors">FAQ</a></li>
+      <li><a href="#contact" class="hover:text-[var(--orange)] transition-colors">联系</a></li>
+    </ul>
+
+    <a href="#contact" class="hidden md:inline-flex items-center gap-2 bg-[var(--orange)] text-black px-5 py-2 rounded-full text-sm font-bold tracking-wide btn-scale">
+      免费预约
+    </a>
+
+    <!-- hamburger -->
+    <button id="menuBtn" class="md:hidden relative z-50 w-8 h-8 flex flex-col items-center justify-center gap-1.5" aria-label="菜单">
+      <span class="block w-6 h-0.5 bg-white transition-all duration-300 origin-center"></span>
+      <span class="block w-6 h-0.5 bg-white transition-all duration-300"></span>
+      <span class="block w-6 h-0.5 bg-white transition-all duration-300 origin-center"></span>
+    </button>
+
+    <!-- mobile overlay -->
+    <div id="mobileMenu" class="nav-menu md:hidden">
+      <a href="#services" class="text-white/80 hover:text-[var(--orange)] text-xl font-semibold tracking-wide transition-colors">服务</a>
+      <a href="#testimonials" class="text-white/80 hover:text-[var(--orange)] text-xl font-semibold tracking-wide transition-colors">学员蜕变</a>
+      <a href="#faq" class="text-white/80 hover:text-[var(--orange)] text-xl font-semibold tracking-wide transition-colors">常见问题</a>
+      <a href="#contact" class="text-white/80 hover:text-[var(--orange)] text-xl font-semibold tracking-wide transition-colors">联系我</a>
+      <a href="#contact" class="mt-4 bg-[var(--orange)] text-black px-10 py-3 rounded-full text-lg font-bold tracking-wide btn-scale">免费预约体测</a>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="relative min-h-screen flex items-center pt-16 overflow-hidden">
+    <!-- bg accent -->
+    <div class="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-[var(--orange)]/5 blur-[120px] pointer-events-none"></div>
+    <div class="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-orange-500/5 blur-[100px] pointer-events-none"></div>
+
+    <div class="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+      <!-- left: text -->
+      <div class="text-center lg:text-left pt-8 lg:pt-0">
+        <div class="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-5 py-2 text-sm font-medium text-gray-400 mb-8 reveal">
+          <span class="w-2 h-2 rounded-full bg-[var(--orange)] animate-pulse"></span>
+          NASM-CPT · 国家级运动营养师
+        </div>
+
+        <h1 class="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black leading-[1.05] tracking-tight reveal">
+          <span class="text-white">改变，</span><br />
+          <span class="text-[var(--orange)]">从现在开始</span>
+        </h1>
+
+        <p class="mt-6 text-base sm:text-lg text-gray-400 max-w-xl leading-relaxed mx-auto lg:mx-0 reveal">
+          10 年一线教学 · 10,000+ 小时授课 · 500+ 学员见证。<br/>
+          极速减脂 / 产后恢复 / 增肌塑形 / 体态纠正 —— 用科学训练帮你重铸身体。
+        </p>
+
+        <div class="mt-8 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start reveal">
+          <a href="#contact" class="inline-flex items-center gap-2 bg-[var(--orange)] text-black px-8 py-4 rounded-full text-base font-extrabold tracking-wide btn-scale shadow-lg shadow-orange-500/20">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            免费预约体测
+          </a>
+          <a href="#services" class="inline-flex items-center gap-2 text-gray-400 hover:text-white px-6 py-4 text-sm font-semibold tracking-wide transition-colors">
+            了解更多 &darr;
+          </a>
+        </div>
+
+        <!-- trust mini -->
+        <div class="mt-10 flex items-center gap-6 justify-center lg:justify-start text-sm text-gray-500 reveal">
+          <div class="flex -space-x-2">
+            <div class="w-8 h-8 rounded-full border-2 border-[#0a0a0a] bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-[10px] font-black">💪</div>
+            <div class="w-8 h-8 rounded-full border-2 border-[#0a0a0a] bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-[10px] font-black">🏋️</div>
+            <div class="w-8 h-8 rounded-full border-2 border-[#0a0a0a] bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-[10px] font-black">🔥</div>
+            <div class="w-8 h-8 rounded-full border-2 border-[#0a0a0a] bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-[10px] font-black">⭐</div>
+          </div>
+          <span>信任之选 · <strong class="text-white">500+</strong> 学员</span>
+        </div>
+      </div>
+
+      <!-- right: image placeholder -->
+      <div class="relative reveal hidden lg:block">
+        <div class="relative w-full aspect-[4/5] rounded-2xl overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border border-white/5">
+          <!-- geometric accent -->
+          <div class="absolute -top-10 -right-10 w-40 h-40 border-[20px] border-[var(--orange)]/10 rounded-full"></div>
+          <div class="absolute -bottom-6 -left-6 w-24 h-24 border-[12px] border-orange-500/10 rounded-full"></div>
+
+          <!-- trainer silhouette -->
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <div class="text-8xl mb-2 opacity-80">🏋️</div>
+            <div class="text-center">
+              <p class="text-white/70 font-bold text-lg tracking-wider">DING YI</p>
+              <p class="text-gray-500 text-xs tracking-widest mt-1">PERSONAL TRAINER</p>
+            </div>
+          </div>
+
+          <!-- floating badge -->
+          <div class="absolute bottom-6 right-6 bg-black/70 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 text-center">
+            <p class="text-[var(--orange)] font-black text-xl">10</p>
+            <p class="text-gray-500 text-[10px] tracking-widest">YEARS</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- scroll hint -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 text-gray-600 text-[10px] tracking-widest animate-bounce">
+      <span>SCROLL</span>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+    </div>
+
+    <!-- hero divider -->
+    <div class="hero-divider"></div>
+  </section>
+
+  <!-- ===== TRUST COUNTERS ===== -->
+  <section class="relative z-10 bg-[#0a0a0a] py-16 lg:py-20 -mt-1 border-y border-white/5">
+    <div class="max-w-6xl mx-auto px-6 lg:px-12 grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 text-center stagger" id="counterSection">
+      <div>
+        <div class="counter-value text-4xl lg:text-5xl font-black text-[var(--orange)]" data-target="10" data-suffix="年">0</div>
+        <div class="mt-2 text-sm text-gray-500 font-medium tracking-wide">从业经验</div>
+      </div>
+      <div>
+        <div class="counter-value text-4xl lg:text-5xl font-black text-[var(--orange)]" data-target="500" data-suffix="+">0</div>
+        <div class="mt-2 text-sm text-gray-500 font-medium tracking-wide">服务学员</div>
+      </div>
+      <div>
+        <div class="counter-value text-4xl lg:text-5xl font-black text-[var(--orange)]" data-target="10000" data-suffix="+">0</div>
+        <div class="mt-2 text-sm text-gray-500 font-medium tracking-wide">授课时长(h)</div>
+      </div>
+      <div>
+        <div class="counter-value text-4xl lg:text-5xl font-black text-[var(--orange)]" data-target="3000" data-suffix="kg+">0</div>
+        <div class="mt-2 text-sm text-gray-500 font-medium tracking-wide">减脂总量</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SERVICES ===== -->
+  <section id="services" class="py-20 lg:py-28 relative">
+    <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-orange-500/20 to-transparent"></div>
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <div class="text-center reveal">
+        <span class="text-[var(--orange)] text-sm font-bold tracking-[4px]">SERVICES</span>
+        <h2 class="mt-3 text-3xl lg:text-5xl font-black tracking-tight">服务<span class="text-[var(--orange)]">项目</span></h2>
+        <div class="divider-line mx-auto mt-4"></div>
+        <p class="mt-4 text-gray-500 max-w-xl mx-auto">科学体系 · 因人而异 · 全程陪伴</p>
+      </div>
+
+      <div class="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-6 stagger" id="servicesGrid">
+        <!-- card 1 -->
+        <div class="group bg-white/[0.03] border border-white/5 rounded-2xl p-8 hover:border-[var(--orange)]/30 hover:bg-white/[0.06] transition-all duration-300">
+          <div class="w-14 h-14 rounded-xl bg-[var(--orange)]/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">💪</div>
+          <h3 class="mt-6 text-lg font-black">1对1私教课</h3>
+          <p class="mt-3 text-sm text-gray-500 leading-relaxed">量身定制训练计划，全程动作纠正与保护。含体态评估 + 阶段性复测，确保每滴汗水都有效。</p>
+        </div>
+        <!-- card 2 -->
+        <div class="group bg-white/[0.03] border border-white/5 rounded-2xl p-8 hover:border-[var(--orange)]/30 hover:bg-white/[0.06] transition-all duration-300">
+          <div class="w-14 h-14 rounded-xl bg-[var(--orange)]/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🔥</div>
+          <h3 class="mt-6 text-lg font-black">21天线上减脂营</h3>
+          <p class="mt-3 text-sm text-gray-500 leading-relaxed">每日训练计划 + 饮食指导 + 社群打卡。足不出户，21天见证体脂率明显下降。</p>
+        </div>
+        <!-- card 3 -->
+        <div class="group bg-white/[0.03] border border-white/5 rounded-2xl p-8 hover:border-[var(--orange)]/30 hover:bg-white/[0.06] transition-all duration-300">
+          <div class="w-14 h-14 rounded-xl bg-[var(--orange)]/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">👥</div>
+          <h3 class="mt-6 text-lg font-black">企业团课</h3>
+          <p class="mt-3 text-sm text-gray-500 leading-relaxed">办公室亚健康改善专场，HIIT / 瑜伽 / 工位拉伸。提升团队活力，降低健康风险。</p>
+        </div>
+        <!-- card 4 -->
+        <div class="group bg-white/[0.03] border border-white/5 rounded-2xl p-8 hover:border-[var(--orange)]/30 hover:bg-white/[0.06] transition-all duration-300">
+          <div class="w-14 h-14 rounded-xl bg-[var(--orange)]/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🥗</div>
+          <h3 class="mt-6 text-lg font-black">运动营养方案</h3>
+          <p class="mt-3 text-sm text-gray-500 leading-relaxed">基于身体成分分析，定制每日宏量与微量元素摄入。减脂不断碳、增肌不瞎吃。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TESTIMONIALS ===== -->
+  <section id="testimonials" class="py-20 lg:py-28 bg-white/[0.01] border-y border-white/5 relative">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <div class="text-center reveal">
+        <span class="text-[var(--orange)] text-sm font-bold tracking-[4px]">TRANSFORMATIONS</span>
+        <h2 class="mt-3 text-3xl lg:text-5xl font-black tracking-tight">学员<span class="text-[var(--orange)]">蜕变</span></h2>
+        <div class="divider-line mx-auto mt-4"></div>
+      </div>
+
+      <div class="mt-14 grid md:grid-cols-2 lg:grid-cols-3 gap-6 stagger" id="testimonialsGrid">
+        <!-- card 1 -->
+        <div class="bg-white/[0.03] border border-white/5 rounded-2xl overflow-hidden hover:border-[var(--orange)]/20 transition-all duration-300">
+          <div class="ba-split aspect-[4/3] bg-gradient-to-br from-gray-800 to-gray-900">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="text-5xl">🏋️</span>
+            </div>
+            <!-- divider line mock -->
+            <div class="absolute inset-y-0 left-1/2 w-0.5 bg-white/20 -translate-x-1/2 z-10"></div>
+            <div class="absolute top-2 left-2 bg-black/60 text-[10px] font-bold px-2 py-1 rounded z-20 text-orange-400">BEFORE</div>
+            <div class="absolute top-2 right-2 bg-black/60 text-[10px] font-bold px-2 py-1 rounded z-20 text-green-400">AFTER</div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center gap-2 text-yellow-400 text-sm mb-2">★★★★★</div>
+            <p class="text-sm text-gray-400 leading-relaxed">"3个月减了12kg，整个人脱胎换骨。丁教练的训练计划科学又高效，关键是完全不伤膝盖。"</p>
+            <p class="mt-4 text-sm font-bold">李明<span class="text-gray-600 font-normal"> · 互联网总监</span></p>
+          </div>
+        </div>
+        <!-- card 2 -->
+        <div class="bg-white/[0.03] border border-white/5 rounded-2xl overflow-hidden hover:border-[var(--orange)]/20 transition-all duration-300">
+          <div class="ba-split aspect-[4/3] bg-gradient-to-br from-gray-800 to-gray-900">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="text-5xl">🏋️</span>
+            </div>
+            <div class="absolute inset-y-0 left-1/2 w-0.5 bg-white/20 -translate-x-1/2 z-10"></div>
+            <div class="absolute top-2 left-2 bg-black/60 text-[10px] font-bold px-2 py-1 rounded z-20 text-orange-400">BEFORE</div>
+            <div class="absolute top-2 right-2 bg-black/60 text-[10px] font-bold px-2 py-1 rounded z-20 text-green-400">AFTER</div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center gap-2 text-yellow-400 text-sm mb-2">★★★★★</div>
+            <p class="text-sm text-gray-400 leading-relaxed">"产后2年开始恢复训练，丁教练特别专业，腹直肌分离和盆底肌的问题都考虑到了。现在比孕前状态还好！"</p>
+            <p class="mt-4 text-sm font-bold">王雅<span class="text-gray-600 font-normal"> · 全职妈妈</span></p>
+          </div>
+        </div>
+        <!-- card 3 -->
+        <div class="bg-white/[0.03] border border-white/5 rounded-2xl overflow-hidden hover:border-[var(--orange)]/20 transition-all duration-300 md:hidden lg:block">
+          <div class="ba-split aspect-[4/3] bg-gradient-to-br from-gray-800 to-gray-900">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="text-5xl">🏋️</span>
+            </div>
+            <div class="absolute inset-y-0 left-1/2 w-0.5 bg-white/20 -translate-x-1/2 z-10"></div>
+            <div class="absolute top-2 left-2 bg-black/60 text-[10px] font-bold px-2 py-1 rounded z-20 text-orange-400">BEFORE</div>
+            <div class="absolute top-2 right-2 bg-black/60 text-[10px] font-bold px-2 py-1 rounded z-20 text-green-400">AFTER</div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center gap-2 text-yellow-400 text-sm mb-2">★★★★★</div>
+            <p class="text-sm text-gray-400 leading-relaxed">"体态纠正太神了！5年圆肩驼背，丁教练通过呼吸训练+筋膜松解+针对性力量，2个月站姿完全变了。"</p>
+            <p class="mt-4 text-sm font-bold">张晨<span class="text-gray-600 font-normal"> · 程序员</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section id="faq" class="py-20 lg:py-28 relative">
+    <div class="max-w-3xl mx-auto px-6 lg:px-12">
+      <div class="text-center reveal">
+        <span class="text-[var(--orange)] text-sm font-bold tracking-[4px]">FAQ</span>
+        <h2 class="mt-3 text-3xl lg:text-5xl font-black tracking-tight">常见<span class="text-[var(--orange)]">问题</span></h2>
+        <div class="divider-line mx-auto mt-4"></div>
+      </div>
+
+      <div class="mt-12 space-y-3 reveal" id="faqList">
+        <!-- Q1 -->
+        <div class="faq-item bg-white/[0.03] border border-white/5 rounded-xl overflow-hidden cursor-pointer transition-colors hover:border-white/10">
+          <div class="faq-trigger flex items-center justify-between px-6 py-5 select-none">
+            <span class="font-bold text-sm sm:text-base">零基础完全没去过健身房，能练吗？</span>
+            <span class="faq-icon text-[var(--orange)] text-xl font-light leading-none transition-transform duration-300">+</span>
+          </div>
+          <div class="faq-answer px-6">
+            <p class="text-gray-500 text-sm leading-relaxed pb-5">完全可以。我 80% 的学员刚来时都是零基础。第一节课会从体态评估和基础动作模式（呼吸、髋铰链、蹲、推、拉）开始，循序渐进建立正确的运动习惯。你不需要提前准备任何东西，穿运动服来就行。</p>
+          </div>
+        </div>
+        <!-- Q2 -->
+        <div class="faq-item bg-white/[0.03] border border-white/5 rounded-xl overflow-hidden cursor-pointer transition-colors hover:border-white/10">
+          <div class="faq-trigger flex items-center justify-between px-6 py-5 select-none">
+            <span class="font-bold text-sm sm:text-base">需要准备什么器材或补剂吗？</span>
+            <span class="faq-icon text-[var(--orange)] text-xl font-light leading-none transition-transform duration-300">+</span>
+          </div>
+          <div class="faq-answer px-6">
+            <p class="text-gray-500 text-sm leading-relaxed pb-5">不需要。工作室提供全套训练器材（哑铃、杠铃、弹力带、壶铃等），你只需要穿运动服和运动鞋。营养补剂方面，前期以饮食调整为主，我不会让你盲目买任何产品。</p>
+          </div>
+        </div>
+        <!-- Q3 -->
+        <div class="faq-item bg-white/[0.03] border border-white/5 rounded-xl overflow-hidden cursor-pointer transition-colors hover:border-white/10">
+          <div class="faq-trigger flex items-center justify-between px-6 py-5 select-none">
+            <span class="font-bold text-sm sm:text-base">多久能看到效果？</span>
+            <span class="faq-icon text-[var(--orange)] text-xl font-light leading-none transition-transform duration-300">+</span>
+          </div>
+          <div class="faq-answer px-6">
+            <p class="text-gray-500 text-sm leading-relaxed pb-5">按经验：2周内体能明显提升（不再容易喘）；4-6周开始肉眼可见体型变化；8-12周实现显著蜕变。当然这取决于训练频率和饮食配合度——这也是为什么我一直强调「三分练七分吃」。</p>
+          </div>
+        </div>
+        <!-- Q4 -->
+        <div class="faq-item bg-white/[0.03] border border-white/5 rounded-xl overflow-hidden cursor-pointer transition-colors hover:border-white/10">
+          <div class="faq-trigger flex items-center justify-between px-6 py-5 select-none">
+            <span class="font-bold text-sm sm:text-base">线上减脂营和私教课有什么区别？</span>
+            <span class="faq-icon text-[var(--orange)] text-xl font-light leading-none transition-transform duration-300">+</span>
+          </div>
+          <div class="faq-answer px-6">
+            <p class="text-gray-500 text-sm leading-relaxed pb-5">线上减脂营是录播训练 + 社群打卡 + 每周直播答疑，适合时间不固定或预算有限的朋友。私教课是一对一现场指导，我会随时纠正动作、调整强度。如果你完全零基础或需要伤后恢复，建议先上几节私教课打好基础。</p>
+          </div>
+        </div>
+        <!-- Q5 -->
+        <div class="faq-item bg-white/[0.03] border border-white/5 rounded-xl overflow-hidden cursor-pointer transition-colors hover:border-white/10">
+          <div class="faq-trigger flex items-center justify-between px-6 py-5 select-none">
+            <span class="font-bold text-sm sm:text-base">怎么预约免费体测？具体测什么？</span>
+            <span class="faq-icon text-[var(--orange)] text-xl font-light leading-none transition-transform duration-300">+</span>
+          </div>
+          <div class="faq-answer px-6">
+            <p class="text-gray-500 text-sm leading-relaxed pb-5">拉到底部联系区，加我微信或发邮件即可预约。体测内容包括：体成分分析（肌肉量、体脂率、水分等）、静态姿态评估、基础动作筛查和心肺功能测试。全程约45分钟，结束后我会根据结果给你一份初步训练建议——完全免费，没有推销。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact" class="py-20 lg:py-28 bg-white/[0.01] border-t border-white/5 relative">
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-orange-500/[0.02] to-transparent pointer-events-none"></div>
+    <div class="max-w-4xl mx-auto px-6 lg:px-12 text-center relative z-10">
+      <div class="reveal">
+        <span class="text-[var(--orange)] text-sm font-bold tracking-[4px]">CONTACT</span>
+        <h2 class="mt-3 text-3xl lg:text-5xl font-black tracking-tight">现在就<span class="text-[var(--orange)]">开始</span></h2>
+        <div class="divider-line mx-auto mt-4"></div>
+        <p class="mt-4 text-gray-500 max-w-lg mx-auto">改变不会自己发生。迈出第一步，剩下的交给我。</p>
+      </div>
+
+      <div class="mt-14 flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-20 reveal">
+        <!-- left: wechat placeholder -->
+        <div>
+          <div class="w-40 h-40 rounded-2xl bg-white/5 border-2 border-dashed border-white/10 flex items-center justify-center mx-auto">
+            <div class="text-center">
+              <span class="text-4xl">💬</span>
+              <p class="mt-2 text-[10px] text-gray-600 tracking-wider">微信二维码</p>
+            </div>
+          </div>
+          <p class="mt-3 text-sm text-gray-500 font-medium">加微信 · 预约免费体测</p>
+        </div>
+
+        <!-- right: info -->
+        <div class="text-center lg:text-left">
+          <a href="mailto:dingyi.fitness@example.com" class="inline-flex items-center gap-3 text-gray-300 hover:text-[var(--orange)] transition-colors text-lg font-medium">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"/></svg>
+            dingyi.fitness@example.com
+          </a>
+
+          <div class="mt-8 flex items-center justify-center lg:justify-start gap-5">
+            <!-- 小红书 -->
+            <a href="#" class="w-12 h-12 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-xl hover:bg-[var(--orange)]/10 hover:border-[var(--orange)]/30 hover:text-[var(--orange)] transition-all duration-300" aria-label="小红书">
+              <span class="text-lg font-black tracking-tighter" style="font-family:sans-serif">RED</span>
+            </a>
+            <!-- 抖音 -->
+            <a href="#" class="w-12 h-12 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-xl hover:bg-[var(--orange)]/10 hover:border-[var(--orange)]/30 hover:text-[var(--orange)] transition-all duration-300" aria-label="抖音">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+            </a>
+            <!-- Instagram -->
+            <a href="#" class="w-12 h-12 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-xl hover:bg-[var(--orange)]/10 hover:border-[var(--orange)]/30 hover:text-[var(--orange)] transition-all duration-300" aria-label="Instagram">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="border-t border-white/5 py-8 text-center text-gray-600 text-xs tracking-wider">
+    <p>&copy; 2026 丁一 · 改变，从现在开始</p>
+  </footer>
+
+  <script>
+    // ===== Mobile menu =====
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+      const spans = menuBtn.querySelectorAll('span');
+      if (mobileMenu.classList.contains('open')) {
+        spans[0].style.transform = 'rotate(45deg) translate(4px, 4px)';
+        spans[1].style.opacity = '0';
+        spans[2].style.transform = 'rotate(-45deg) translate(4px, -4px)';
+      } else {
+        spans[0].style.transform = '';
+        spans[1].style.opacity = '';
+        spans[2].style.transform = '';
+      }
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        const spans = menuBtn.querySelectorAll('span');
+        spans[0].style.transform = '';
+        spans[1].style.opacity = '';
+        spans[2].style.transform = '';
+      });
+    });
+
+    // ===== Scroll reveal (IntersectionObserver) =====
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.reveal, .stagger').forEach(el => revealObserver.observe(el));
+
+    // ===== Counter animation =====
+    function animateCounters() {
+      const counters = document.querySelectorAll('.counter-value[data-target]');
+      counters.forEach(counter => {
+        const target = parseInt(counter.dataset.target);
+        const suffix = counter.dataset.suffix || '';
+        const duration = 1800;
+        const step = Math.max(1, Math.floor(target / (duration / 16)));
+        let current = 0;
+
+        const update = () => {
+          current += step;
+          if (current < target) {
+            counter.textContent = current.toLocaleString();
+            requestAnimationFrame(update);
+          } else {
+            counter.textContent = target.toLocaleString() + suffix;
+          }
+        };
+        update();
+      });
+    }
+
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounters();
+          counterObserver.disconnect();
+        }
+      });
+    }, { threshold: 0.5 });
+    counterObserver.observe(document.getElementById('counterSection'));
+
+    // ===== FAQ accordion =====
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.addEventListener('click', () => {
+        item.classList.toggle('faq-open');
+        // close others
+        document.querySelectorAll('.faq-item').forEach(other => {
+          if (other !== item) other.classList.remove('faq-open');
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
